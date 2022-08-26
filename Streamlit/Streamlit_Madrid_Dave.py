@@ -13,17 +13,17 @@ dataset = st.container()
 
 #Sidebar
 add_selectbox = st.sidebar.selectbox(
-    "How would you like to be contacted?",
-    ("Email", "Home phone", "Mobile phone")
+    "Years",
+    ("2019", "2020", "2021")
 )
 
 # Using "with" notation
 with st.sidebar:
     add_radio = st.radio(
         "Choose a shipping method",
-        ("Standard (5-15 days)", "Express (2-5 days)")
+        ("Heatmap", "Columns")
     )
-with st.sidebar: st.metric(label="Temperature", value="70 °F", delta="1.2 °F")
+with st.sidebar: st.metric(label="Prices", value="70$ ", delta="1.2 $")
 
 
 
@@ -36,37 +36,79 @@ with dataset:
     madrid_data = pd.read_csv("madrid_airbnb.csv",)
    
     st.write(madrid_data.head(50))
-    coordinates = madrid_data[["latitude", "longitude"]]
+    coordinates = madrid_data[["latitude", "longitude","price"]]
+    price = madrid_data["price"]
     st.write(coordinates.head(50))
+    st.write(price.head(50))
 
 
-    st.map (coordinates,)
-
+    
+#Map 1
 st.pydeck_chart(pdk.Deck(
      map_style=None,
      initial_view_state=pdk.ViewState(
-         latitude=37.76,
-         longitude=-122.4,
+         latitude=40.41596,
+         longitude=-3.7325,
          zoom=11,
          pitch=50,
      ),
      layers=[
          pdk.Layer(
-            'HexagonLayer',
-            data=coordinates,
+            'HeatmapLayer',
+            data= coordinates,
             get_position='[longitude, latitude]',
-            radius=10,
-            elevation_scale=4,
-            elevation_range=[0, 1000],
+            radius=5,
+            elevation_scale=1,
+            elevation_range=[0, 500],
             pickable=True,
             extruded=True,
+            
+    
+        
+
          ),
          pdk.Layer(
              'ScatterplotLayer',
-             data=coordinates   ,
+             data = coordinates,
              get_position='[longitude, latitude]',
              get_color='[200, 30, 0, 160]',
-             get_radius=10,
+             get_radius=5,
          ),
      ],
  ))
+
+ #Map 2
+
+st.pydeck_chart(pdk.Deck(
+     map_style=None,
+     initial_view_state=pdk.ViewState(
+         latitude=40.41596,
+         longitude=-3.7325,
+         zoom=11,
+         pitch=50,
+    
+     ),
+     layers=[
+         pdk.Layer(
+            'ColumnLayer',
+            data= coordinates,
+            get_position='[longitude, latitude]',
+            radius=10,
+            elevation_scale=0.25,
+            elevation_range=[0, 1000],
+            get_elevation = '[price]',
+            pickable=True,
+            extruded= True,
+            getTooltip='[price]',
+            
+            
+            getFillColor= [150, 3, 0, 255]
+            
+    
+        
+
+         ),
+        
+     ],
+ ))
+
