@@ -4,39 +4,75 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 import numpy as np
-
+from streamlit_option_menu import option_menu
 
 st.set_page_config(layout="wide")
 
+#Variables
+madrid_data = pd.read_csv("madrid_airbnb.csv",)
+coordinates = madrid_data[["latitude", "longitude", "price"]]
+price = madrid_data["price"]
 
+#Containers
 header = st.container()
-dataset = st.container()
+body = st.container()
+sidebar = st.container()
 
-# Sidebar
-add_selectbox = st.sidebar.selectbox(
+
+
+# Using "with" notation
+
+with header:
+    
+   
+    
+    st.title("BIENVENIDO A MADRID!!! :tada: :smile:")
+
+with body:
+
+    st.title("Madrid Airbnb :hotel:")
+
+
+    st.write(madrid_data.head(50))
+    
+    
+    st.write(price.head(50))
+
+
+#Sidebar
+
+with st.sidebar:
+
+#NavBar
+    selected = option_menu(
+    menu_title="Home Madrid",  # required
+    options=["Home", "Datos", "Outliers", "Contacto"],  # required
+    #icons=["house", "geo-alt", "graph-up","chevron-bar-expand", "chat"],  # optional
+    menu_icon="cast",  # optional
+    default_index=0,  # optional
+    
+            )
+    st.metric(label="Prices", value="70$ ", delta="1.2 $")
+
+    add_selectbox = st.sidebar.selectbox(
     "Years",
     ("2019", "2020", "2021")
 )
 
-# Using "with" notation
-
 with st.sidebar:
-    st.metric(label="Prices", value="70$ ", delta="1.2 $")
+    map_type = st.radio(
+        "Choose a map type",
+        ("Density", "Columns")
+        )
+
+    if map_type == "Density":
+        st.write("heatmap")
+    
+    else:
+        with dataset:
+            st.write(coordinates.head(50))
 
 
-with header:
-    st.title("BIENVENIDO A MADRID!!! :tada: :smile:")
-
-with dataset:
-
-    st.title("Madrid Airbnb :hotel:")
-    madrid_data = pd.read_csv("madrid_airbnb.csv",)
-
-    st.write(madrid_data.head(50))
-    coordinates = madrid_data[["latitude", "longitude", "price"]]
-    price = madrid_data["price"]
-    st.write(coordinates.head(50))
-    st.write(price.head(50))
 
 
 # Map 1
@@ -115,15 +151,5 @@ columns_map = st.pydeck_chart(pdk.Deck(
     ],
 ))
 
-with st.sidebar:
-    map_type = st.radio(
-        "Choose a map type",
-        ("Density", "Columns")
-        )
 
-    if map_type == "heatmap":
-        st.write("heatmap")
-    
-    else:
-        st.write("columns_map")
     
