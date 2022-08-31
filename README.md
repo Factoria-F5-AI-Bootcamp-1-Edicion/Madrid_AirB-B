@@ -12,7 +12,7 @@ ___
 
 
 # Tecnologías aplicadas:
-- Trello para la organización de tareas y el equipo. [link Trello]('https://trello.com/b/nI30yb7N/equipo-madrid')
+- Trello para la organización de tareas y el equipo. [Trello](https://trello.com/b/nI30yb7N/equipo-madrid)
 - JupyterLab.
     - Código Python.
     - Librerías:
@@ -21,11 +21,11 @@ ___
         - Matplotlib.
         - Seaborn.
         - Plotly
-- Repositorio en Github. [link Github](`https://github.com/Factoria-F5-AI-Bootcamp-1-Edicion/Madrid_AirB-B`)
+- Repositorio en Github. [Github](https://github.com/Factoria-F5-AI-Bootcamp-1-Edicion/Madrid_AirB-B)
 - Streamlit para WebApp
 
 # El equipo:
 - Ana de Córdoba (Scrum Máster)
+- Andrea Sandoval.
 - David García.
 - Rebeca Castañeda.
-- Andrea Sandoval.
