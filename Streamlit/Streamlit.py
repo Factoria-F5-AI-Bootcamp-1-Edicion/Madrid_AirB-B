@@ -37,21 +37,52 @@ with st.sidebar:
 
    # st.metric(label="Prices", value="70$ ", delta="1.2 $")
 
-
+#Creamos aprtado para Home
 
 if selected == "Home":
 
-    st.title("Bienvenido a Madrid :smile:")
+    box= st.sidebar.selectbox(" ",["Conoce Data Home","Descubre Madrid"],index=0)
 
-    st.image("madrid.jpg")
+    if box== "Conoce Data Home":
 
-    box= st.sidebar.selectbox("Descubre",["Distritos","Anuncios"],index=0)
-    if box== "Distritos":
-        st.subheader("Podemos observar los distritos de Madrid: ")
-        plt.ion()
-        plt.figure(figsize=(10,6))
-        sns.scatterplot(x=data.longitude,y=data.latitude,hue=data.neighbourhood_group)
-        st.pyplot()
+        st.title("Data Home Madrid") 
+        
+        st.write("Somos una empresa de consultoría de nueva generación especializada en hostelería y turismo, basada en análisis de datos e Inteligencia Artifical")
+        
+        st.image("Roof & casa.jpg")
+        
+        
+        st.subheader("**Transformamos los datos en valor y utilidad para tu negocio**")
+
+        st.image("FotoMadrid.jpg")
+        
+        cont = st.container()
+    
+        cont.write ("Nuestro servicio de datos se basan en dos pilares escenciales: El uso de la Inteligencia Artificial y las competencias analiticas y empresariales de nuestro equipo. Nuestra fuerza proviene de una combinación única de tecnologia de datos de ultima generacion, métodos ágiles que permiten entregar proyectos muy rápido y un equipo formado por los mejores expertos en sus campos (consultores de negocios, analistas de datos, científicos de datos, ingenieros de datos y especialistas en hotelería y turismo.")
+
+        
+
+    if box=="Descubre Madrid":  
+
+       st.title("Nuestra ciudad: ") 
+
+       st.subheader("Madrid es la 1ª ciudad de España y la 4ª del mundo mejor preparada para el turismo")
+
+       st.video("https://www.youtube.com/watch?v=-Xv5rw_Xv8c")
+
+       st.markdown("# Por que Madrid:")
+
+       st.image("XqMadrid.JPG")
+
+       st.markdown("# Dividida en 21 distritos y 128 barrios, Madrid ofrece una oferta turistica impresionate y para todo tipo de clientes : ")
+
+       plt.ion()
+       plt.figure(figsize=(10,6))
+       sns.scatterplot(x=data.longitude,y=data.latitude,hue=data.neighbourhood_group)
+       st.pyplot()
+
+       st.markdown("- Vemos en la imagen la distribución de anuncios por distrito")
+
         
         
 
@@ -99,6 +130,8 @@ if selected== "Datos":
     fig = px.pie(data, values=values, names=names)
     fig.update_traces(textposition='inside', textinfo='percent+label')
     st.plotly_chart(fig)
+
+#Creamos apartado de Outliers
 
 if selected== "Outliers":
     
