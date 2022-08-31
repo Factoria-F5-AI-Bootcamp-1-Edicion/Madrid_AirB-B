@@ -13,6 +13,21 @@ from streamlit_option_menu import option_menu
 #Se quita aviso de pyplot
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
+#Se importa csv
+data = pd.read_csv("madrid_airbnb.csv")
+
+#Se limpian los datos
+dfName = data["name"].mode()[0]
+data["name"].fillna(dfName, inplace=True)
+
+dfhost_name = data["host_name"].mode()[0]
+data["host_name"].fillna(dfhost_name, inplace=True)
+
+data["last_review"].fillna("No Reviews", inplace=True)
+
+data["reviews_per_month"].fillna(0, inplace=True)
+
+#SideBar
 with st.sidebar:
 #NavBar
     selected = option_menu( "Home Madrid", ["Home", "Datos", "Outliers", "Contacto"],
@@ -22,7 +37,7 @@ with st.sidebar:
 
    # st.metric(label="Prices", value="70$ ", delta="1.2 $")
 
-data = pd.read_csv("madrid_airbnb.csv")
+
 
 if selected == "Home":
 
@@ -54,41 +69,6 @@ if selected== "Datos":
     plt.title("Scatter Plot")
     st.pyplot()
 
-#Se crea boton para visualizar mapa segun precio
-    if st.button ('Mapa segun precio'):
-                coordinates= data[["latitude","longitude","price"]]    
-
-                tooltip = {
-                "html": "Cost <strong>{price}$</strong>",
-                    }
-
-                columns_map = st.pydeck_chart(pdk.Deck(
-                map_style=None,
-                tooltip=tooltip,
-                initial_view_state=pdk.ViewState(
-                latitude=40.41596,
-                longitude=-3.7325,
-                zoom=11,
-                pitch=50,
-            ),
-                layers=[
-                pdk.Layer(
-                'ColumnLayer',
-                data=coordinates,
-                get_position='[longitude, latitude]',
-                radius=10,
-                elevation_scale=0.25,
-                elevation_range=[0, 1000],
-                get_elevation='[price]',
-                pickable=True,
-                extruded=True,
-                                
-                getFillColor=[150, 3, 0, 255]
-
-            ),
-
-            ],
-        ))
 #Visualizacion de los distritos degun su cantidad de anuncios
 
     st.subheader("Distritos segun su cantidad de anuncios:")
@@ -99,40 +79,12 @@ if selected== "Datos":
     st.plotly_chart(fig)
 
 
-
-#Se crea boton para visualizar mapa segun su cantidad de anuncios
-
-    if st.button ('Mapa segun anuncio'):
-
-            coordinates= data[["latitude","longitude","price"]]
-
-            st.pydeck_chart(pdk.Deck(
-            map_style=None,
-            initial_view_state=pdk.ViewState(
-                latitude=40.41596,
-                longitude=-3.7325,
-                zoom=11,
-                pitch=50,
-            ),
-            layers=[
-                pdk.Layer(
-                    'HeatmapLayer',
-                    data= coordinates,
-                    get_position='[longitude, latitude]',
-                    radius=5,
-                    elevation_scale=1,
-                    elevation_range=[0, 500],
-                    pickable=True,
-                    extruded=True,
-                ),
-            ],
-        ))
-
 #Visualizacion de los barrios del centro
     st.subheader("Distrito del Centro por precio:")
     st.markdown("""
-    - Como hemos podido apreciar según los graficos anteriores, en el distrito del centro tenemos mayor cantidad de anuncios; asi que, vamos a explorar en  que barrios se concentran más dichos auncios """)
-    fig = px.bar((data['neighbourhood'].value_counts()).to_frame(name="count"), y="count", color=data['neighbourhood'].value_counts(),title = 'Barrios del Centro')
+    - Como hemos podido apreciar según los graficos anteriores, en el distrito del centro tenemos mayor cantidad de anuncios; asi que, vamos a explorar en  que barrios se concentran más dichos anuncios """)
+    datos_centro = data[data["neighbourhood_group"].str.contains("Centro")]
+    fig = px.bar((datos_centro['neighbourhood'].value_counts()).to_frame(name="count"), y="count", color=datos_centro['neighbourhood'].value_counts(),title = 'Barrios del Centro')
     st.plotly_chart(fig)
 
 #Visualizacion de los hospedajes segun su precio
@@ -149,11 +101,58 @@ if selected== "Datos":
     st.plotly_chart(fig)
 
 if selected== "Outliers":
+    
     st.header ("Valores atipicos o anomalos")
     st.markdown("Hemos comprobado que la existencia de eventos en determinadas fechas y localización aumenta los precios de los inmuebles en alquiler.")
     
-    rad = st.radio("Navega",["Caso 1", "Caso 2"])
+    option = st.selectbox(
+            'Outliers más significativos',
+            ('Final Champions 2019', 'Pandemia 2020'))
 
-    if rad == "Caso 1":
+    if option == "Final Champions 2019":
     
-        st.subheader("Caso 1: Final de la Champions :soccer:")
+        st.header("Caso 1: Final de la Champions 2019  :soccer:") 
+
+        st.markdown("""Despues de analizar los datos nos dimos cuenta de una cantidad significativa de anuncios mostraban estar en alquiler cerca a la fecha de la final de la Champions. Por lo que aumentaba el precio medio de los barrios aledaños añ estadio Wanda Metropolitano.  Aunque, tambien observamos anuncios en otros barrios de Madrid para la misma finalidad que significaban mucha diferencia en compración. """)
+
+        st.image("champions.jpg")
+
+
+        st.subheader("Visualizacion de los datos con relacion a la Champions")
+        datos_sanblas = data[data["neighbourhood_group"].str.contains("San Blas - Canillejas")]
+        datos_champions = datos_sanblas[datos_sanblas["name"].str.contains("hampion")]
+        
+        st.write(datos_champions)
+
+    else: 
+        st.subheader('Caso 2: Pandemia 2020 :syringe:')
+
+        st.markdown("""  """)
+
+        st.image("madrid_vacio.jpg")
+
+
+        st.write("Visualizacion de los datos con relacion a la Pandemia : ")
+        
+        pandemia_abril = data[data["last_review"].str.contains("2020-04")]
+        st.write(pandemia_abril.head(20))
+
+        st.markdown("Nos muestra la cantidad de entradas con reviews en abril del año 2020 :")
+        pandemia_abril.shape
+        st.markdown("""
+                        - Se encuentran 73 anuncios en este mes; ya que, fue en abril donde intentificamos los outliers debido a la normativa de Airbnb respecto a los reviews. 
+                        - Se observa una menor cantidad de anuncios con reviews debido al confinamiento restrictivo.  
+                    """)
+
+        pandemia_mayo = data[data["last_review"].str.contains("2020-05")]
+        st.write(pandemia_mayo.head(20))
+
+        st.markdown("Nos muestra la cantidad de entradas con reviews en mayo del año 2020 :")
+        pandemia_mayo.shape
+        st.markdown(""" 
+                        - Se encuentran 60 anuncios en este mes; ya que, fue en mayo el ultimo mes de confinamiento restrictivo.
+                        - Fue a partir de junio que el confinamiento paso a ser perimetral; por lo que, se pudo hacer turismo  dentro de la comunidad. 
+                    """)
+
+
+        
