@@ -13,7 +13,9 @@ import plotly.figure_factory as ff
 import plotly.graph_objects as go
 from streamlit_option_menu import option_menu
 
+#Estableciendo la vista de la página como ancha
 st.set_page_config(layout="wide")
+
 
 #Variables
 data = pd.read_csv("madrid_airbnb.csv",)
@@ -35,92 +37,83 @@ data["reviews_per_month"].fillna(0, inplace=True)
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
-# #Containers
-# text = st.container()
-# body = st.container()
-# sidebar = st.container()
+# Funcion para reducir el margen top
+def margin(): 
+    st.markdown("""
+            <style>
+                .css-18e3th9 {
+                        padding-top: 1rem;
+                        padding-bottom: 10rem;
+                        padding-left: 5rem;
+                        padding-right: 5rem;
+                    }
+                .css-1d391kg {
+                        padding-top: 3.5rem;
+                        padding-right: 1rem;
+                        padding-bottom: 3.5rem;
+                        padding-left: 1rem;
+                    }
+            </style>
+            """, unsafe_allow_html=True)
 
+header = st.container()
 
-
-# Using "with" notation
-
-
-    
-
-
-
+        
 #MENU 
 EXAMPLE_NO = 1
 
 
 def streamlit_menu(example=1):
+    
     if example == 1:
         # 1. as sidebar menu
         with st.sidebar:
+            
             selected = option_menu(
                 menu_title="Menu",  # required
                 options=["Home", "Datos", "Mapas", "Outliers", "Conclusiones"],  # required
-                icons=["house", "book", "envelope"],  # optional
-                menu_icon="cast",  # optional
+                icons=["house", "bar-chart", "map", "exclamation-octagon","eye"],  # optional
+                #menu_icon= "cast",  # optional
                 default_index=0,  # optional
-            )
+                styles={
+                    "menu-icon":"Data",
+                    
+                    "menu_title":{"font-family": "Sans-serif"},
+                    "nav-link": {"font-family": "Sans-serif", "text-align": "left", "margin":"0px",},
+                    #"nav-link-selected": {""}, 
+                    })
         return selected
 
-    if example == 2:
-        # 2. horizontal menu w/o custom style
-        selected = option_menu(
-            menu_title=None,  # required
-            options=["Home", "Projects", "Contact"],  # required
-            icons=["house", "book", "envelope"],  # optional
-            menu_icon="cast",  # optional
-            default_index=0,  # optional
-            orientation="horizontal",
-        )
-        return selected
-
-    if example == 3:
-        # 2. horizontal menu with custom style
-        selected = option_menu(
-            menu_title=None,  # required
-            options=["Home", "Projects", "Contact"],  # required
-            icons=["house", "book", "envelope"],  # optional
-            menu_icon="cast",  # optional
-            default_index=0,  # optional
-            orientation="horizontal",
-            styles={
-                "container": {"padding": "0!important", "background-color": "#fafafa"},
-                "icon": {"color": "orange", "font-size": "25px"},
-                "nav-link": {
-                    "font-size": "25px",
-                    "text-align": "left",
-                    "margin": "0px",
-                    "--hover-color": "#eee",
-                },
-                "nav-link-selected": {"background-color": "green"},
-            },
-        )
-        return selected
 
 
 selected = streamlit_menu(example=EXAMPLE_NO)
 
 if selected == "Home":
-    # Remove whitespace from the top of the page and sidebar
+    
 
     box= st.sidebar.selectbox(" ",["Conoce Data Home","Descubre Madrid"],index=0)
 
     if box== "Conoce Data Home":
 
-        st.title("Data Home Madrid") 
+        st.image("Data Home.png")
+        
+        st.write("")
+        
+        
+        
         
         st.write("Somos una empresa de consultoría de nueva generación especializada en hostelería y turismo, basada en análisis de datos e Inteligencia Artifical")
         
-        st.image("Roof & casa.jpg")
+        st.write("")
+        st.write("")
+        st.write("")
+        
+        
         
         
         st.subheader("**Transformamos los datos en valor y utilidad para tu negocio**")
 
-        st.image("FotoMadrid.jpg")
+        st.image("FotoMadrid.jpg" )
         
         cont = st.container()
     
@@ -151,23 +144,7 @@ if selected == "Home":
     
    
 if selected== "Datos":
-    # Remove whitespace from the top of the page and sidebar
-    st.markdown("""
-            <style>
-                .css-18e3th9 {
-                        padding-top: 1.5rem;
-                        padding-bottom: 10rem;
-                        padding-left: 5rem;
-                        padding-right: 5rem;
-                    }
-                .css-1d391kg {
-                        padding-top: 3.5rem;
-                        padding-right: 1rem;
-                        padding-bottom: 3.5rem;
-                        padding-left: 1rem;
-                    }
-            </style>
-            """, unsafe_allow_html=True)  
+    margin() 
     
 
 #Vizualizacion de la Base de Datos
@@ -175,7 +152,7 @@ if selected== "Datos":
     with st.sidebar:
         box = st.selectbox(
         'Seleccione una opción',
-        ('Dataframe', 'Precios', 'Cantidad de anuncios', "Barrios", "Hospedajes"))
+        ('Dataframe', 'Precios', 'Cantidad de anuncios', "Barrios del Centro", "Hospedajes"))
     if box== "Dataframe":
         st.header("Base de datos Madrid Airbnb:")
         st.markdown("Se puede mostrar parte de la base datos para su visualizacion: ")
@@ -183,27 +160,34 @@ if selected== "Datos":
 
     if box== "Precios":
         #Visualizacion de los distritos degun su precio
-            st.header("Distritos segun su precio:")
+            
+            st.header("Precios por distrito:")
+            st.markdown("""Aquí podemos observar algunos outliers de precio en zonas que no son tan céntricas, la explicacion que le podemos dar es que se celebrara algún evento en fechas determinadas.
+            """)
             plt.scatter(data["price"],data["neighbourhood_group"])
             plt.title("Scatter Plot")
             st.pyplot()
+            
 
 
     if box== "Cantidad de anuncios":
         #Visualizacion de los distritos degun su cantidad de anuncios
 
-        st.header("Distritos segun su cantidad de anuncios:")
+        st.header("Cantidad de anuncios por distrito:")
         st.bar_chart((data['neighbourhood_group'].value_counts()).to_frame(name="count"), )
+
+        st.markdown("""Comprobamos la hipótesis que en el centro hay una mayor cantidad de hospedajes en alquiler con un 64.5% del total de anuncios.""")
 
         # Podemos observar mejor los datos con plotly
         fig = px.bar((data['neighbourhood_group'].value_counts()).to_frame(name="count"), y="count", color= (data['neighbourhood_group'].value_counts()),title="Distritos de Madrid")
         st.plotly_chart(fig)
+        
 
 
     
-    if box== "Barrios":
+    if box== "Barrios del Centro":
         #Visualizacion de los barrios del centro
-        st.subheader("Distrito del Centro por precio:")
+        st.subheader("Barrios del Centro:")
         st.markdown("""
         - Como hemos podido apreciar según los graficos anteriores, en el distrito del centro tenemos mayor cantidad de anuncios; asi que, vamos a explorar en  que barrios se concentran más dichos anuncios """)
         datos_centro = data[data["neighbourhood_group"].str.contains("Centro")]
@@ -213,12 +197,13 @@ if selected== "Datos":
 
     if box== "Hospedajes":
         #Visualizacion de los hospedajes segun su precio
-        st.header("Tipo de hospedaje segun su precio:")
+        st.header("Tipo de hospedaje:")
         plt.scatter(data["room_type"],data["price"])
+        st.markdown("Observamos la relación del precio con el tipo de hospedaje")
         plt.title("Scatter Plot")
         st.pyplot()
         
-        st.markdown("Lo observamos con otro grafico")
+        st.markdown("Lo observamos con otro gráfico")
         values = data.room_type.value_counts()
         names = data.room_type.unique().tolist()
         fig = px.pie(data, values=values, names=names)
@@ -231,6 +216,7 @@ if selected== "Datos":
         
 
 if selected == "Mapas":
+    margin()
 
     # Remove whitespace from the top of the page and sidebar
     st.markdown("""
@@ -263,6 +249,7 @@ if selected == "Mapas":
         #col3.metric(label="Mean Price", value="150$ ", delta="1.2 $")
     
     if add_selectbox == "Densidad":
+        st.markdown("Observamos un mapa de calor de la densidad de anuncios")
         
 
     
@@ -290,6 +277,10 @@ if selected == "Mapas":
                 ]))
 
     if add_selectbox == "Precios":
+        margin()
+
+        st.markdown("Observamos un mapa de columnas de cada anuncio. La altura de las columnas representa el precio por noche de cada anuncio")
+        
         # Map 2
 
 
@@ -325,10 +316,12 @@ if selected == "Mapas":
 
 
 if selected == "Outliers":
+    margin()
     st.header ("Valores atipicos o anomalos")
     st.markdown("Hemos comprobado que la existencia de eventos en determinadas fechas y localización aumenta los precios de los inmuebles en alquiler.")
     
-    option = st.selectbox(
+    with st.sidebar: 
+        option = st.selectbox(
             'Outliers más significativos',
             ('Final Champions 2019', 'Pandemia 2020'))
 
@@ -378,46 +371,29 @@ if selected == "Outliers":
                     """)
 
 if selected == "Conclusiones":
+    margin()
     st.header("Conclusiones")
-    st.text("Confirmamos la hipótesis que los barrios céntricos son los más anunciados por la aplicación de Airbnb. Podemos decir, que hay mas oferta; ya que, en el distrito del Centro tenemos un 64% de anuncios. Además, dentro de este distrito tenemos a los tres barrios con más hospedajes los cuales son Embajadores, Universidad y Palacio. Estamos asumiendo que la oferta va ligada a la demanda en el Centro, pero no podemos corroborar esta hipótesis debido a que nos falta información.")
-    Debido al análisis de precios que hemos realizado, podemos decir que hay una gran variedad para todos los presupuestos del turista.
+    st.markdown(""" 
 
-    Deducimos que el propietario prefiere alquilar un apartameto o casa completa antes que una habitación de hotel debido a la alta oferta que se ofrece.
+        -  Confirmamos la hipótesis que los barrios céntricos son los más anunciados por la aplicación de Airbnb. Podemos decir, que hay mas oferta; ya que, en el distrito del Centro tenemos un 64% de anuncios. Además, dentro de este distrito tenemos a los tres barrios con más hospedajes los cuales son Embajadores, Universidad y Palacio.
 
-    También, hemos comprobado que la existencia de eventos en determinadas fechas y localización aumenta los precios de los inmuebles en alquiler.")
-
+        -  Estamos asumiendo que la oferta va ligada a la demanda en el Centro, pero no podemos corroborar esta hipótesis debido a que nos falta información.
 
 
-
+        +  Debido al análisis de precios que hemos realizado, podemos decir que hay una gran variedad para todos los presupuestos del turista. 
     
+        +  Deducimos que el propietario prefiere alquilar un apartameto o casa completa antes que una habitación de hotel debido a la alta oferta que se ofrece.
     
-
-
-   
-   
-   
-   
-   
-   
+        +  También, hemos comprobado que la existencia de eventos en determinadas fechas y  localización aumenta los precios de los inmuebles en alquiler. 
     
+        -  Como por ejemplo, tenemos la final de la Champions celebarada en Madrid en el estadio Wanda Metropolitano ubicado en el distrito de San Blas - Canillejas el año 2019. Ya que, el promedio de precio de este distrito aumentó significativamente debido a este evento.
+        """)
 
+    st.subheader("Observaciones")
+    st.markdown(""" 
 
+        + En algunos casos pudimos observar que algunos propietarios prefieren no poner su nombre y utilizan apodos o distintas combinaciones alfa-numéricas para proteger su privacidad.
 
+   + Vemos que hay propiertarios que tienen más de 100 alojamientos, siendo un ejemplo un host con 163 inmuebles aunciados. 
 
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
+   + Hemos observado alquileres en el año 2020 durante los meses de confinamiento; ya que, Airbnb solo te permite valorar la experiencia del hospedaje máximo quince dias después del check-out. Entendemos que estos datos son posibles outliers.""")
