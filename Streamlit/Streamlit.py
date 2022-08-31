@@ -5,7 +5,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+import plotly.figure_factory as ff
+import plotly.graph_objects as go
 from streamlit_option_menu import option_menu
+
 
 #Se quita aviso de pyplot
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -18,8 +21,6 @@ with st.sidebar:
         default_index=0)
 
    # st.metric(label="Prices", value="70$ ", delta="1.2 $")
-
-
 
 data = pd.read_csv("madrid_airbnb.csv")
 
@@ -45,7 +46,6 @@ if selected== "Datos":
 
 #Vizualizacion de la Base de Datos
     st.markdown("Se puede mostrar parte de la base datos para su visualizacion: ")
-    st.set_option('deprecation.showPyplotGlobalUse', False)
     st.write(data.head(20))
     
 #Visualizacion de los distritos degun su precio
@@ -93,6 +93,13 @@ if selected== "Datos":
 
     st.subheader("Distritos segun su cantidad de anuncios:")
     st.bar_chart((data['neighbourhood_group'].value_counts()).to_frame(name="count"), y="count" )
+
+    # Podemos observar mejor los datos con plotly
+    fig = px.bar((data['neighbourhood_group'].value_counts()).to_frame(name="count"), y="count", color= (data['neighbourhood_group'].value_counts()),title="Distritos de Madrid")
+    st.plotly_chart(fig)
+
+
+
 #Se crea boton para visualizar mapa segun su cantidad de anuncios
 
     if st.button ('Mapa segun anuncio'):
@@ -121,13 +128,32 @@ if selected== "Datos":
             ],
         ))
 
+#Visualizacion de los barrios del centro
+    st.subheader("Distrito del Centro por precio:")
+    st.markdown("""
+    - Como hemos podido apreciar según los graficos anteriores, en el distrito del centro tenemos mayor cantidad de anuncios; asi que, vamos a explorar en  que barrios se concentran más dichos auncios """)
+    fig = px.bar((data['neighbourhood'].value_counts()).to_frame(name="count"), y="count", color=data['neighbourhood'].value_counts(),title = 'Barrios del Centro')
+    st.plotly_chart(fig)
+
 #Visualizacion de los hospedajes segun su precio
     st.subheader("Tipo de hospedaje segun su precio:")
     plt.scatter(data["room_type"],data["price"])
     plt.title("Scatter Plot")
     st.pyplot()
     
+    st.markdown("Lo observamos con otro grafico")
+    values = data.room_type.value_counts()
+    names = data.room_type.unique().tolist()
+    fig = px.pie(data, values=values, names=names)
+    fig.update_traces(textposition='inside', textinfo='percent+label')
+    st.plotly_chart(fig)
 
 if selected== "Outliers":
+    st.header ("Valores atipicos o anomalos")
+    st.markdown("Hemos comprobado que la existencia de eventos en determinadas fechas y localización aumenta los precios de los inmuebles en alquiler.")
+    
+    rad = st.radio("Navega",["Caso 1", "Caso 2"])
 
-    st.title ("Mapas segun relacion")
+    if rad == "Caso 1":
+    
+        st.subheader("Caso 1: Final de la Champions :soccer:")
