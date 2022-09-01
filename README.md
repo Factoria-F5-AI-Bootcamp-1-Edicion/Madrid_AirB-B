@@ -1,5 +1,5 @@
 ## Home Data Madrid
-![image](https://github.com/Factoria-F5-AI-Bootcamp-1-Edicion/Madrid_AirB-B/blob/rama_rebe/Roof%20%26%20casa.jpg)
+![image](https://github.com/Factoria-F5-AI-Bootcamp-1-Edicion/Madrid_AirB-B/blob/main/Streamlit/Data%20Home.png)
 ___
 # Características del equipo:
 - Somos una empresa de consultoría de nueva generación especializada en hostelería y turismo, basada en análisis de datos e Inteligencia Artifical.
@@ -23,6 +23,7 @@ ___
         - Plotly
 - Repositorio en [Github](https://github.com/Factoria-F5-AI-Bootcamp-1-Edicion/Madrid_AirB-B).
 - Streamlit para WebApp
+    - Para aplicar temas: ** mover config.toml a la carpeta usuario .streamlit **.
 
 # El equipo:
 - Ana de Córdoba (Scrum Máster)
